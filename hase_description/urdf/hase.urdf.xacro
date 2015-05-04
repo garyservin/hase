@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<robot name="hase" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:property name="PI" value="3.1415926535897931" />
+
+  <xacro:property name="wheelbase" value="0.0" />
+  <xacro:property name="track" value="0.23" /> 
+  <xacro:property name="wheel_vertical_offset" value="0.0363" />
+  <xacro:property name="footprint_vertical_offset" value="0.0548" />
+
+  <xacro:property name="wheel_radius" value="0.0615" />
+  <xacro:property name="wheel_width" value="0.0205" />
+
+  <xacro:property name="chassis_height" value="0.1" />
+  <xacro:property name="chassis_radius" value="0.178" />
+
+  <xacro:property name="dummy_inertia" value="1e-09"/>
+
+  <material name="dark_grey"><color rgba="0.2 0.2 0.2 1.0" /></material>
+  <material name="light_grey"><color rgba="0.4 0.4 0.4 1.0" /></material>
+  <material name="yellow"><color rgba="0.8 0.8 0.0 1.0" /></material>
+  <material name="black"><color rgba="0.15 0.15 0.15 1.0" /></material>
+  <material name="white"><color rgba="0.85 0.85 0.85 1.0" /></material>
+
+  <xacro:macro name="wheel" params="prefix *joint_pose">
+
+    <link name="${prefix}_wheel_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://hase_description/meshes/wheel.dae" scale=".001 .001 .001"/>
+        </geometry>
+        <material name="black" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0 0 0" />
+        <mass value="0.1"/>
+        <inertia
+          ixx="0.0001" ixy="0.0" ixz="0.0"
+          iyy="0.0001" iyz="0.0"
+          izz="0.001"/>
+      </inertial>
+    </link>
+
+    <gazebo reference="${prefix}_wheel_link">
+      <material>Gazebo/DarkGrey</material>
+    </gazebo>
+
+    <joint name="${prefix}_wheel" type="continuous">
+      <parent link="chassis_link"/>
+      <child link="${prefix}_wheel_link" />
+      <xacro:insert_block name="joint_pose" />
+      <hardwareInterface>VelocityJointInterface</hardwareInterface>
+      <axis xyz="0 0 1"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:wheel prefix="left">
+    <origin xyz="${wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="${-PI/2} 0 0" />
+  </xacro:wheel>
+  <xacro:wheel prefix="right">
+    <origin xyz="${wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="${PI/2} 0 0" />
+  </xacro:wheel>
+
+  <link name="base_link"></link>
+
+  <joint name="base_link_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="base_link"/>
+    <child link="chassis_link" />
+  </joint>
+
+  <link name="chassis_link">
+    <visual>
+      <origin xyz="0 0 ${footprint_vertical_offset}" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://hase_description/meshes/base.dae" scale=".001 .001 .001"/>
+      </geometry>
+      <material name="yellow" />
+    </visual>
+    <collision>
+      <origin xyz="0.0 0 ${chassis_height/2}" rpy="0 0 0"/> <!-- should we use footprint_vertical?-->
+      <geometry>
+        <cylinder length="${chassis_height}" radius="${chassis_radius}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <!-- Center of mass -->
+      <origin xyz="0 0 0"/>
+      <mass value="2.4"/> <!-- 2.4/2.6 kg for small/big battery pack -->
+      <!-- Moments of inertia: ( chassis without wheels ) -->
+      <inertia ixx="0.019995" ixy="0.0" ixz="0.0"
+               iyy="0.019995" iyz="0.0"
+               izz="0.03675" />
+    </inertial>
+  </link>
+
+  <link name="caster_front_link">
+    <collision>
+      <geometry>
+        <cylinder length="0.015" radius="0.04"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.01" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
+    </inertial>
+  </link>
+  <joint name="caster_front_joint" type="fixed">
+    <parent link="chassis_link"/>
+    <child link="caster_front_link"/>
+    <origin xyz="0.115 0.0 0.015" rpy="${-PI/2} 0 0"/>
+  </joint>
+
+  <joint name="caster_back_joint" type="fixed">
+    <parent link="chassis_link"/>
+    <child link="caster_back_link"/>
+    <origin xyz="-0.115 0.0 0.015" rpy="${-PI/2} 0 0"/>
+  </joint>
+  <link name="caster_back_link">
+    <collision>
+      <geometry>
+        <cylinder length="0.015" radius="0.04"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="0.01" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
+    </inertial>
+  </link>
+
+  <!-- Bring in simulation data for Gazebo. -->
+  <xacro:include filename="hase.gazebo" />
+
+</robot>

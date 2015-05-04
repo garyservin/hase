@@ -1,0 +1,12 @@
+<launch>
+  <rosparam command="load" file="$(find hase_control)/config/control.yaml"></rosparam>
+
+  <node name="controller_spawner" pkg="controller_manager" type="spawner"
+        args="hase_joint_publisher hase_velocity_controller --shutdown-timeout 1" />
+
+  <!--node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization" /-->
+
+  <node pkg="topic_tools" type="relay" name="cmd_vel_relay"
+        args="cmd_vel hase_velocity_controller/cmd_vel" />
+</launch>
+
