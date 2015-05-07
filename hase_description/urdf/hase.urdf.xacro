@@ -57,16 +57,25 @@
       <parent link="chassis_link"/>
       <child link="${prefix}_wheel_link" />
       <xacro:insert_block name="joint_pose" />
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
       <axis xyz="0 0 1"/>
     </joint>
+
+    <transmission name="${prefix}_wheel_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${prefix}_wheel">
+        <hardwareInterface>VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${prefix}_actuator">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
   </xacro:macro>
 
   <xacro:wheel prefix="left">
     <origin xyz="${wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="${-PI/2} 0 0" />
   </xacro:wheel>
   <xacro:wheel prefix="right">
-    <origin xyz="${wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="${PI/2} 0 0" />
+    <origin xyz="${wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="${-PI/2} 0 0" />
   </xacro:wheel>
 
   <link name="base_link"></link>
