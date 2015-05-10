@@ -112,6 +112,13 @@
   </link>
 
   <link name="caster_front_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.015" radius="0.04"/>
+      </geometry>
+      <material name="light_grey" />
+    </visual>
     <collision>
       <geometry>
         <cylinder length="0.015" radius="0.04"/>
@@ -129,15 +136,22 @@
   <joint name="caster_front_joint" type="fixed">
     <parent link="chassis_link"/>
     <child link="caster_front_link"/>
-    <origin xyz="0.115 0.0 0.015" rpy="${-PI/2} 0 0"/>
+    <origin xyz="0.115 0.0 0.01" rpy="${-PI/2} 0 0"/>
   </joint>
 
   <joint name="caster_back_joint" type="fixed">
     <parent link="chassis_link"/>
     <child link="caster_back_link"/>
-    <origin xyz="-0.115 0.0 0.015" rpy="${-PI/2} 0 0"/>
+    <origin xyz="-0.115 0.0 0.01" rpy="${-PI/2} 0 0"/>
   </joint>
   <link name="caster_back_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder length="0.015" radius="0.04"/>
+      </geometry>
+      <material name="light_grey" />
+    </visual>
     <collision>
       <geometry>
         <cylinder length="0.015" radius="0.04"/>
