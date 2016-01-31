@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+  <name>hase_navigation</name>
+  <version>0.0.0</version>
+  <description>Launch files and code for autonomous navigation of the Hase robot</description>
+  <author email="garyservin@gmail.com">Gary Servin</author>
+  <maintainer email="garyservin@gmail.com">Gary Servin</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roslaunch</build_depend>
+  <run_depend>gmapping</run_depend>
+  <run_depend>move_base</run_depend>
+
+  <export>
+  </export>
+</package>
