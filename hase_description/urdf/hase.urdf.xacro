@@ -5,12 +5,12 @@
   <xacro:property name="wheelbase" value="0.0" />
   <xacro:property name="track" value="0.23" />
   <xacro:property name="wheel_vertical_offset" value="0.0315" />
-  <xacro:property name="footprint_vertical_offset" value="0.05" />
+  <xacro:property name="footprint_vertical_offset" value="0.003" />
 
   <xacro:property name="wheel_radius" value="0.0615" />
   <xacro:property name="wheel_width" value="0.0205" />
 
-  <xacro:property name="chassis_height" value="0.1" />
+  <xacro:property name="chassis_height" value="0.05" />
   <xacro:property name="chassis_radius" value="0.178" />
 
   <xacro:property name="dummy_inertia" value="1e-09"/>
@@ -22,6 +22,7 @@
   <material name="yellow"><color rgba="0.8 0.8 0.0 1.0" /></material>
   <material name="black"><color rgba="0.15 0.15 0.15 1.0" /></material>
   <material name="white"><color rgba="0.85 0.85 0.85 1.0" /></material>
+  <material name="acrilic"><color rgba="0.85 0.85 0.85 0.3" /></material>
 
   <xacro:macro name="wheel" params="prefix *joint_pose">
 
@@ -80,6 +81,46 @@
     <origin xyz="${wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="${-PI/2} 0 0" />
   </xacro:wheel>
 
+  <xacro:macro name="caster" params="prefix *joint_pose">
+    <link name="${prefix}_caster_link">
+      <visual>
+        <origin rpy="${PI} 0 ${PI/2}" xyz="0 0 -0.01125"/>
+        <geometry>
+          <mesh filename="package://hase_description/meshes/ball_caster.stl" scale=".001 .001 .001"/>
+        </geometry>
+        <material name="light_grey" />
+      </visual>
+      <collision>
+        <geometry>
+          <sphere radius="0.0075"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 -0.0225"/>
+      </collision>
+      <inertial>
+        <mass value="0.01" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+                 iyy="0.001" iyz="0.0"
+                 izz="0.001" />
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_caster_joint" type="fixed">
+      <parent link="chassis_link"/>
+      <child link="${prefix}_caster_link"/>
+      <xacro:insert_block name="joint_pose" />
+      <axis xyz="0 0 1"/>
+      <!--origin xyz="0.16 0.0 0" rpy="0 0 0"/-->
+    </joint>
+  </xacro:macro>
+
+  <xacro:caster prefix="front">
+    <origin xyz="0.155 0 0" rpy="0 0 0" />
+  </xacro:caster>
+  <xacro:caster prefix="back">
+    <origin xyz="-0.155 0 0" rpy="0 0 0" />
+  </xacro:caster>
+
   <link name="base_link"></link>
 
   <joint name="base_link_joint" type="fixed">
@@ -92,9 +133,9 @@
     <visual>
       <origin xyz="0 0 ${footprint_vertical_offset}" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://hase_description/meshes/base.stl" scale=".001 .001 .001"/>
+        <mesh filename="package://hase_description/meshes/base_simple.stl" scale=".001 .001 .001"/>
       </geometry>
-      <material name="black" />
+      <material name="acrilic" />
     </visual>
     <collision>
       <origin xyz="0.0 0 ${chassis_height/2}" rpy="0 0 0"/>
@@ -119,67 +160,11 @@
     </inertial>
   </link>
 
-  <link name="caster_front_link">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <cylinder length="0.015" radius="0.04"/>
-      </geometry>
-      <material name="light_grey" />
-    </visual>
-    <collision>
-      <geometry>
-        <cylinder length="0.015" radius="0.04"/>
-      </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-    </collision>
-    <inertial>
-      <mass value="0.01" />
-      <origin xyz="0 0 0" />
-      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-               iyy="0.001" iyz="0.0"
-               izz="0.001" />
-    </inertial>
-  </link>
-  <joint name="caster_front_joint" type="fixed">
-    <parent link="chassis_link"/>
-    <child link="caster_front_link"/>
-    <origin xyz="0.115 0.0 0.01" rpy="${-PI/2} 0 0"/>
-  </joint>
-
-  <joint name="caster_back_joint" type="fixed">
-    <parent link="chassis_link"/>
-    <child link="caster_back_link"/>
-    <origin xyz="-0.115 0.0 0.01" rpy="${-PI/2} 0 0"/>
-  </joint>
-  <link name="caster_back_link">
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <cylinder length="0.015" radius="0.04"/>
-      </geometry>
-      <material name="light_grey" />
-    </visual>
-    <collision>
-      <geometry>
-        <cylinder length="0.015" radius="0.04"/>
-      </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-    </collision>
-    <inertial>
-      <mass value="0.01" />
-      <origin xyz="0 0 0" />
-      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-               iyy="0.001" iyz="0.0"
-               izz="0.001" />
-    </inertial>
-  </link>
-
   <!-- Bring in simulation data for Gazebo. -->
   <xacro:include filename="hase.gazebo" />
 
   <joint name="laser_mount_link_joint" type="fixed">
-    <origin xyz="0 0 0.10" rpy="0 0 0" />
+    <origin xyz="0.135 0 0.006" rpy="0 0 0" />
     <parent link="base_link"/>
     <child link="laser_mount_link" />
   </joint>
