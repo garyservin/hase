@@ -51,6 +51,8 @@
 
     <gazebo reference="${prefix}_wheel_link">
       <material>Gazebo/DarkGrey</material>
+      <mu1>50.0</mu1>
+      <mu2>50.0</mu2>
     </gazebo>
 
     <joint name="${prefix}_wheel" type="continuous">
