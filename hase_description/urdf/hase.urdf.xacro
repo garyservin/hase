@@ -160,6 +160,32 @@
     </inertial>
   </link>
 
+  <xacro:macro name="motor" params="prefix *joint_pose">
+    <link name="${prefix}_motor_link">
+      <visual>
+        <origin rpy="${PI/2} 0 0" xyz="0 0 0.026"/>
+        <geometry>
+          <mesh filename="package://hase_description/meshes/motor_and_bracket.stl" scale=".001 .001 .001"/>
+        </geometry>
+        <material name="light_grey" />
+      </visual>
+    </link>
+
+    <joint name="${prefix}_motor_joint" type="fixed">
+      <parent link="chassis_link"/>
+      <child link="${prefix}_motor_link"/>
+      <xacro:insert_block name="joint_pose" />
+      <axis xyz="0 0 1"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:motor prefix="left">
+    <origin xyz="0 -0.05 0" rpy="0 0 0" />
+  </xacro:motor>
+  <xacro:motor prefix="right">
+    <origin xyz="0 0.05 0" rpy="0 0 ${PI}" />
+  </xacro:motor>
+
   <!-- Bring in simulation data for Gazebo. -->
   <xacro:include filename="hase.gazebo" />
 
